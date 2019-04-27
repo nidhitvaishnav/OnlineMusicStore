@@ -1,0 +1,33 @@
+<div ng-include="'partials/navbar.html'"></div>
+<div class="container">
+    <h1>Register</h1>
+
+    <form enctype="multipart/form-data">
+        <!-- First Name -->
+        <div class="form-group">
+            <div class="form-group">
+                <input class="form-control" placeholder="First Name" ng-model="user.fname" id="fname" required></input>
+            </div>
+        </div>
+        <!-- Last Name -->
+        <div class="form-group">
+            <input class="form-control" placeholder="Last Name" ng-model="user.lname" id="lname"required></input>
+        </div>
+        <!-- Email -->
+        <div class="form-group">
+            <input class="form-control" placeholder="Email" ng-model="user.email" id="email" required></input>
+        </div>
+        <!-- Password -->
+        <div class="form-group">
+            <input type="password" placeholder="Password" class="form-control" ng-model="user.password" id="password" required></input>
+        </div>
+        <!-- Password-Repeat -->
+        <div class="form-group">
+            <input type="password" class="form-control" placeholder="Re-Enter Your Password" ng-model="user.passwordRepeat" id="passwordRepeat" required></input>
+        </div>
+
+        <input type="button" class="btn btn-primary" value="Register" ng-click="register()"></input>
+    </form>
+</div>
+<script src="../js/register.js"></script>
+<link type="text/css" href="../css/validate.css">

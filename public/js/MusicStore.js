@@ -1,7 +1,7 @@
-var app = angular.module('auth-node', ['ngResource', 'ngRoute']);
+var app = angular.module('MusicStore', ['ngResource', 'ngRoute']);
 var cookie = {};
 
-app.config(['$routeProvider', function($routeProvider) {
+app.config(['$routeProvider', function($routeProvider, $locationProvider) {
     $routeProvider
         .when('/', {
             templateUrl: 'partials/home.html',
@@ -23,6 +23,18 @@ app.config(['$routeProvider', function($routeProvider) {
             templateUrl: 'partials/home.html',
             controller: 'logoutCtrl'
         })
+        .when('/add-track', {
+            templateUrl: 'partials/track-form.html',
+            controller: 'AddTrackCtrl'
+        })
+        .when('/track/editTrack/:id',{
+            templateUrl: 'partials/track-form.html',
+            controller: 'EditTrackCtrl'
+        })
+        .when('/track/deleteTrack/:id', {
+        templateUrl: 'partials/track-delete.html',
+        controller: 'DeleteTrackCtrl'
+        })
         .otherwise({
             redirectTo: '/'
         });
@@ -37,6 +49,12 @@ app.controller('homeCtrl', ['$scope', '$resource', '$location', '$window',
             $scope.userID = $window.localStorage.getItem('userID');
             $scope.userEmail = $window.localStorage.getItem('userEmail');
             $scope.userToken = $window.localStorage.getItem('userToken');
+            
+            //code for tracks
+            var Tracks = $resource('/api/music');//, { search: keyword, criteria: type });
+                Tracks.query(function(tracks){
+                $scope.tracks = tracks;
+            });
         }
         else {
             $scope.loggedIn = 'no';
@@ -123,3 +141,47 @@ app.controller('testCtrl', ['$scope', '$resource', '$location', '$window',
         }
     }
 ]);
+
+app.controller('AddTrackCtrl', ['$scope', '$resource', '$location',
+    function($scope, $resource, $location){
+        $scope.save = function(){
+            var Tracks = $resource('/api/music');
+            Tracks.save($scope.track, function(){
+                $location.path('/');
+            });
+        };
+    }]);
+
+app.controller('DeleteTrackCtrl', ['$scope', '$resource', '$location', '$routeParams',
+    function($scope, $resource, $location, $routeParams){
+        var Tracks = $resource('/api/music/:id');
+
+        Tracks.get({ id: $routeParams.id }, function(track){
+            $scope.track = track;
+        })
+
+        $scope.delete = function(){
+            Tracks.delete({ id: $routeParams.id }, function(track){
+                $location.path('/');
+            });
+        }
+    }]);
+
+
+
+app.controller('EditTrackCtrl', ['$scope', '$resource', '$location', '$routeParams',
+    function($scope, $resource, $location, $routeParams){   
+        var Tracks = $resource('/api/music/:id', { id: '@_id' }, {
+            update: { method: 'PUT' }
+        });
+
+        Tracks.get({ id: $routeParams.id }, function(track){
+            $scope.track = track;
+        });
+
+        $scope.save = function(){
+            Tracks.update($scope.track, function(){
+                $location.path('/');
+            });
+        }
+    }]);

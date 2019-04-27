@@ -5,6 +5,11 @@ const session = require('express-session');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const errorHandler = require('errorhandler');
+var createError = require('http-errors');
+var cookieParser = require('cookie-parser');
+var logger = require('morgan');
+var favicon = require('serve-favicon');
+
 
 mongoose.promise = global.Promise;
 
@@ -47,6 +52,10 @@ mongoose.set('debug', true);
 require('./models/users');
 require('./config/passport');
 app.use(require('./routes'));
+var musicRouter = require('./routes/music');
+app.use('/api/music', musicRouter);
+
+
 
 app.get('/', function(req, res, next) {
   res.render('index');

@@ -88,6 +88,9 @@ router.post('/login', auth.optional, function(req, res, next) {
         if (passportUser) {
             const user = passportUser;
             user.token = passportUser.generateJWT();
+            console.log('user Email: ' + user.email);
+
+            var isAdmin = false;
 
             return res.json({
                 user: user.toAuthJSON()
@@ -119,6 +122,33 @@ router.get('/current', auth.required, function(req, res, next) {
                 user: user.toAuthJSON()
             });
         });
+});
+
+router.get('/is_admin', auth.required, function(req, res, next) {
+    const {
+        payload: {
+            id
+        }
+    } = req;
+
+    Users.findOne({
+            '_id': id
+        },
+        function(err, data) {
+            if (err) throw err;
+            console.log(data['is_admin']);
+            if (data['is_admin'] == true) {
+                return res.json({
+                    'is_admin': true
+                });
+            } else {
+                return res.json({
+                    'is_admin': false
+                });
+            }
+
+        }
+    );
 });
 
 module.exports = router;

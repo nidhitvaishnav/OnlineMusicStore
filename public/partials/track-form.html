@@ -1,25 +1,30 @@
-<h1>Add Track</h1>
+<div ng-include="'partials/navbar.html'"></div>
 
-<form>
-	<div class="form-group">
-		<label>Title</label>
-		<input class="form-control" ng-model="track.title"></input>
-	</div>
-	<div class="form-group">
-		<label>Album</label>
-		<input class="form-control" ng-model="track.album"></input>
-	</div>
-	<div class="form-group">
-		<label>Artist</label>
-		<input class="form-control" ng-model="track.artist"></input>
-	</div>
-	<div class="form-group">
-        <label>Genre</label>
-        <textarea class="form-control" ng-model="track.genre"></textarea>
-    </div>
-	<div class="form-group">
-		<label>Track Length</label>
-		<textarea class="form-control" ng-model="track.trackLength"></textarea>
-	</div>
-	<input type="button" class="btn btn-primary" value = "Save" ng-click="save()"></input>
-</form>
+<div class="container">
+	<h1>Add Track</h1>
+
+	<form>
+		<div class="form-group">
+			<label>Title</label>
+			<input class="form-control" ng-model="track.title"></input>
+		</div>
+		<div class="form-group">
+			<label>Album</label>
+			<input class="form-control" ng-model="track.album"></input>
+		</div>
+		<div class="form-group">
+			<label>Artist</label>
+			<input class="form-control" ng-model="track.artist"></input>
+		</div>
+		<div class="form-group">
+			<label>Genre</label>
+			<textarea class="form-control" ng-model="track.genre"></textarea>
+		</div>
+		<div class="form-group">
+			<label>Track Length</label>
+			<textarea class="form-control" ng-model="track.trackLength"></textarea>
+		</div>
+		<input type="button" class="btn btn-primary" value="Save" ng-click="save()"></input>
+	</form>
+
+</div>

@@ -12,6 +12,7 @@ const UsersSchema = new Schema({
     email: String,
     hash: String,
     salt: String,
+    is_admin: {type: Boolean, default: false}
 });
 
 UsersSchema.methods.setPassword = function(password) {

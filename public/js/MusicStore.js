@@ -3,7 +3,7 @@ var cookie = {};
 
 app.config(['$routeProvider', function($routeProvider, $locationProvider) {
     $routeProvider
-        .when('/', {
+        .when('/home', {
             templateUrl: 'partials/home.html',
             controller: 'homeCtrl'
         })
@@ -27,13 +27,13 @@ app.config(['$routeProvider', function($routeProvider, $locationProvider) {
             templateUrl: 'partials/track-form.html',
             controller: 'AddTrackCtrl'
         })
-        .when('/track/editTrack/:id',{
+        .when('/track/editTrack/:id', {
             templateUrl: 'partials/track-form.html',
             controller: 'EditTrackCtrl'
         })
         .when('/track/deleteTrack/:id', {
-        templateUrl: 'partials/track-delete.html',
-        controller: 'DeleteTrackCtrl'
+            templateUrl: 'partials/track-delete.html',
+            controller: 'DeleteTrackCtrl'
         })
         .otherwise({
             redirectTo: '/'
@@ -44,27 +44,27 @@ app.config(['$routeProvider', function($routeProvider, $locationProvider) {
 app.controller('homeCtrl', ['$scope', '$resource', '$location', '$window',
     function($scope, $resource, $location, $window) {
         if ($window.localStorage.getItem('loggedIn') == 'yes') {
-            console.log('logged In');
             $scope.loggedIn = 'yes';
             $scope.userID = $window.localStorage.getItem('userID');
             $scope.userEmail = $window.localStorage.getItem('userEmail');
             $scope.userToken = $window.localStorage.getItem('userToken');
-            
+            $scope.isAdmin = $window.localStorage.getItem('is_admin');
+
             //code for tracks
-            var Tracks = $resource('/api/music');//, { search: keyword, criteria: type });
-                Tracks.query(function(tracks){
+            var Tracks = $resource('/api/music'); //, { search: keyword, criteria: type });
+            Tracks.query(function(tracks) {
                 $scope.tracks = tracks;
             });
-        }
-        else {
-            $scope.loggedIn = 'no';
+        } else {
+            $location.path('/login');
         }
     }
 ]);
 
 // Register Page
-app.controller('registerCtrl', ['$scope', '$resource', '$location',
-    function($scope, $resource, $location) {
+app.controller('registerCtrl', ['$scope', '$resource', '$location', '$window',
+    function($scope, $resource, $location, $window) {
+        $scope.loggedIn = $window.localStorage.getItem('loggedIn');
         $scope.register = function() {
             var Users = $resource('/api/users');
             var data = {
@@ -76,16 +76,17 @@ app.controller('registerCtrl', ['$scope', '$resource', '$location',
                 }
             };
             Users.save(data, function() {
-                $location.path('/');
+                $location.path('/home');
             });
         };
     }
 ]);
 
 // Login Page
-app.controller('loginCtrl', ['$scope', '$resource', '$location', '$window',
-    function($scope, $resource, $location, $window) {
+app.controller('loginCtrl', ['$scope', '$resource', '$location', '$window', '$http',
+    function($scope, $resource, $location, $window, $http) {
         var thisWindow = $window;
+        $scope.loggedIn = $window.localStorage.getItem('loggedIn');
         $scope.login = function() {
 
             var Users = $resource('/api/users/login');
@@ -100,11 +101,25 @@ app.controller('loginCtrl', ['$scope', '$resource', '$location', '$window',
                     console.log('Invalid Login Credentials');
                 } else {
                     var user = token['user'];
-                    $window.localStorage.setItem('loggedIn', "yes");
-                    $window.localStorage.setItem('userID', user['_id']);
-                    $window.localStorage.setItem('userEmail', user['email']);
-                    $window.localStorage.setItem('userToken', user['token']);
-                    $location.path('/');
+
+                    var userAdminLink = {
+                        url: '/api/users/is_admin',
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Token ' + user['token']
+                        }
+                    };
+
+                    $http(userAdminLink).then(function(response) {
+                        var adminStatus = response['data']['is_admin'];
+                        $window.localStorage.setItem('loggedIn', "yes");
+                        $window.localStorage.setItem('userID', user['_id']);
+                        $window.localStorage.setItem('is_admin', adminStatus);
+                        $window.localStorage.setItem('userEmail', user['email']);
+                        $window.localStorage.setItem('userToken', user['token']);
+                        $location.path('/home');
+                    });
                 }
             });
         };
@@ -115,13 +130,14 @@ app.controller('loginCtrl', ['$scope', '$resource', '$location', '$window',
 app.controller('logoutCtrl', ['$scope', '$resource', '$location', '$window',
     function($scope, $resource, $location, $window) {
         if ($window.localStorage.getItem('loggedIn') == 'yes') {
-            $scope.loggedIn = 'no';
+            $window.localStorage.setItem('loggedIn', 'no');
             $window.localStorage.setItem('userID', '');
             $window.localStorage.setItem('userEmail', '');
             $window.localStorage.setItem('userToken', '');
-        }
-        else {
+            $location.path('/login');
+        } else {
             $scope.errors = "Not Logged In";
+            $location.path('/login');
         }
     }
 ]);
@@ -130,58 +146,101 @@ app.controller('logoutCtrl', ['$scope', '$resource', '$location', '$window',
 app.controller('testCtrl', ['$scope', '$resource', '$location', '$window',
     function($scope, $resource, $location, $window) {
         if ($window.localStorage.getItem('loggedIn') == 'yes') {
-            console.log('logged In');
             $scope.loggedIn = 'yes';
             $scope.userID = $window.localStorage.getItem('userID');
+            $scope.isAdmin = $window.localStorage.getItem('is_admin');
             $scope.userEmail = $window.localStorage.getItem('userEmail');
             $scope.userToken = $window.localStorage.getItem('userToken');
-        }
-        else {
+        } else {
             $scope.errors = "Not Logged In";
         }
     }
 ]);
 
-app.controller('AddTrackCtrl', ['$scope', '$resource', '$location',
-    function($scope, $resource, $location){
-        $scope.save = function(){
-            var Tracks = $resource('/api/music');
-            Tracks.save($scope.track, function(){
-                $location.path('/');
-            });
-        };
-    }]);
-
-app.controller('DeleteTrackCtrl', ['$scope', '$resource', '$location', '$routeParams',
-    function($scope, $resource, $location, $routeParams){
-        var Tracks = $resource('/api/music/:id');
-
-        Tracks.get({ id: $routeParams.id }, function(track){
-            $scope.track = track;
-        })
-
-        $scope.delete = function(){
-            Tracks.delete({ id: $routeParams.id }, function(track){
-                $location.path('/');
-            });
+// Add Track page
+app.controller('AddTrackCtrl', ['$scope', '$resource', '$location', '$window',
+    function($scope, $resource, $location, $window) {
+        if ($window.localStorage.getItem('loggedIn') == 'yes') {
+            $scope.loggedIn = 'yes';
+            $scope.userID = $window.localStorage.getItem('userID');
+            $scope.isAdmin = $window.localStorage.getItem('is_admin');
+            $scope.userEmail = $window.localStorage.getItem('userEmail');
+            $scope.userToken = $window.localStorage.getItem('userToken');
+            $scope.save = function() {
+                var Tracks = $resource('/api/music');
+                Tracks.save($scope.track, function() {
+                    $location.path('/');
+                });
+            };
+        } else {
+            $location.path('/home');
         }
-    }]);
+    }
+]);
 
+// Delete Track Page
+app.controller('DeleteTrackCtrl', ['$scope', '$resource', '$location', '$routeParams', '$window',
+    function($scope, $resource, $location, $routeParams, $window) {
 
+        if ($window.localStorage.getItem('loggedIn') == 'yes') {
+            $scope.loggedIn = 'yes';
+            $scope.userID = $window.localStorage.getItem('userID');
+            $scope.isAdmin = $window.localStorage.getItem('is_admin');
+            $scope.userEmail = $window.localStorage.getItem('userEmail');
+            $scope.userToken = $window.localStorage.getItem('userToken');
+            var Tracks = $resource('/api/music/:id');
 
-app.controller('EditTrackCtrl', ['$scope', '$resource', '$location', '$routeParams',
-    function($scope, $resource, $location, $routeParams){   
-        var Tracks = $resource('/api/music/:id', { id: '@_id' }, {
-            update: { method: 'PUT' }
-        });
+            Tracks.get({
+                id: $routeParams.id
+            }, function(track) {
+                $scope.track = track;
+            })
 
-        Tracks.get({ id: $routeParams.id }, function(track){
-            $scope.track = track;
-        });
-
-        $scope.save = function(){
-            Tracks.update($scope.track, function(){
-                $location.path('/');
-            });
+            $scope.delete = function() {
+                Tracks.delete({
+                    id: $routeParams.id
+                }, function(track) {
+                    $location.path('/home');
+                });
+            }
+        } else {
+            $location.path('/home');
         }
-    }]);
+    }
+]);
+
+// Edit Track Page
+app.controller('EditTrackCtrl', ['$scope', '$resource', '$location', '$routeParams', '$window',
+    function($scope, $resource, $location, $routeParams, $window) {
+
+        if ($window.localStorage.getItem('loggedIn') == 'yes') {
+            $scope.loggedIn = 'yes';
+            $scope.userID = $window.localStorage.getItem('userID');
+            $scope.isAdmin = $window.localStorage.getItem('is_admin');
+            $scope.userEmail = $window.localStorage.getItem('userEmail');
+            $scope.userToken = $window.localStorage.getItem('userToken');
+
+            var Tracks = $resource('/api/music/:id', {
+                id: '@_id'
+            }, {
+                update: {
+                    method: 'PUT'
+                }
+            });
+
+            Tracks.get({
+                id: $routeParams.id
+            }, function(track) {
+                $scope.track = track;
+            });
+
+            $scope.save = function() {
+                Tracks.update($scope.track, function() {
+                    $location.path('/home');
+                });
+            }
+        } else {
+            $location.path('/home');
+        }
+    }
+]);

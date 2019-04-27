@@ -26,6 +26,12 @@
         "ngx-cookie-service": "^2.1.0",
         "passport": "^0.4.0",
         "passport-local": "^1.0.0",
-        "pug": "^2.0.3"
+        "pug": "^2.0.3",
+        "monk": "^6.0.6",
+        "cookie-parser": "~1.4.3",
+        "debug": "~2.6.9",
+        "http-errors": "~1.6.2",
+        "jade": "~1.11.0",
+        "serve-favicon": "^2.5.0"
     }
 }

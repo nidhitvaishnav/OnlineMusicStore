@@ -20,7 +20,7 @@
 		<a href="/#/add-track">Add Track</a>
 	</p>
 	<ul>
-		<li ng-repeat ="track in tracks|search:keyword|filter: genreFilter" style="float:left; padding: 16px">
+		<li ng-repeat ="track in tracks|search:keyword|filter: genreFilter | startFrom: currentPage * pageSize | limitTo: pageSize" style="float:left; padding: 16px">
 	        <a href="/#/track/editTrack/{{track._id}}">
 	           <!-- <img ng-src="/images/{{video._id}}.jpg" alt="could not be loaded" style="height:200px;width:170px;"/> <br> -->
 	            {{track.title}}
@@ -31,5 +31,12 @@
 		</li>
 
 	</ul>
-
+   
+    <button ng-disabled="currentPage == 0" ng-click="currentPage=currentPage-1">
+        Previous
+    </button>
+    {{currentPage+1}}/{{numberOfPages()}}
+    <button ng-disabled="currentPage >= tracks.length/pageSize - 1" ng-click="currentPage=currentPage+1">
+        Next
+    </button>
 </div>

@@ -50,17 +50,37 @@ app.controller('homeCtrl', ['$scope', '$resource', '$location', '$window',
             $scope.userToken = $window.localStorage.getItem('userToken');
             $scope.isAdmin = $window.localStorage.getItem('is_admin');
 
+            $scope.currentPage = 0;
+            $scope.pageSize = 4;
+            $scope.tracks = [];
+            $scope.numberOfPages=function(){
+                return Math.ceil($scope.tracks.length/$scope.pageSize);                
+            }
             //code for tracks
             var Tracks = $resource('/api/music'); //, { search: keyword, criteria: type });
             Tracks.query(function(tracks) {
-                $scope.tracks = tracks;
-                console.log(tracks);
+                for (var i of tracks) {
+                    $scope.tracks.push(i);
+                }
+
+                // $scope.tracks = tracks;
+                // console.log(tracks);
             });
         } else {
             $location.path('/login');
         }
     }
 ]);
+
+    app.filter('startFrom', function() {
+        return function(tracks, start) {
+            for (var i of tracks){
+                console.log("printing tracks:", i);
+            }
+            start = +start; //parse to int
+            return tracks.slice(start);
+        }
+    });
 
 app.filter('filter',function(){
     return function(tracks, genreFilter){

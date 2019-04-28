@@ -54,12 +54,58 @@ app.controller('homeCtrl', ['$scope', '$resource', '$location', '$window',
             var Tracks = $resource('/api/music'); //, { search: keyword, criteria: type });
             Tracks.query(function(tracks) {
                 $scope.tracks = tracks;
+                console.log(tracks);
             });
         } else {
             $location.path('/login');
         }
     }
 ]);
+
+
+  app.filter('search', function() {
+    return function(tracks, keyword) {
+      // if no keyword is entered, just display all the tracks
+      if (!keyword) { 
+        return tracks; 
+      } 
+      else {
+        var newTracks = [];
+        var keyword = keyword.toLowerCase();
+        console.log("Keyword: ", keyword);
+        // for (var i of tracks){
+        //     if(typeOf(i.title)!='undefined'){
+        //     console.log("typeOf: ", i.title, ":", (i.title.toLowerCase()));}
+        // }
+        // create new set of tracks where 'keyword' exists in object data
+        for (var i of tracks) {
+          if (i.title.toLowerCase().indexOf(keyword) > -1 || 
+              i.album.toLowerCase().indexOf(keyword) > -1 || 
+              checkGenre(i.genre, keyword)|| 
+              checkArtist(i.artist, keyword)) { newTracks.push(i); }
+        }
+        // loop through genres checking if 'keyword' exists
+        function checkGenre(genre, keyword) {
+          for (var g of genre) {
+            if (g.toLowerCase().indexOf(keyword) > -1) {
+              return true;
+            }
+          }
+          return false;
+        }
+        // loop through artist checking if 'keyword' exists
+        function checkArtist(artist, keyword) {
+          for (var a of artist) {
+            if (a.toLowerCase().indexOf(keyword) > -1) {
+              return true;
+            }
+          }
+          return false;
+        }
+        return newTracks;
+      }
+    };
+  });
 
 // Register Page
 app.controller('registerCtrl', ['$scope', '$resource', '$location', '$window',

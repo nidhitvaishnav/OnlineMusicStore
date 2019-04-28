@@ -62,8 +62,36 @@ app.controller('homeCtrl', ['$scope', '$resource', '$location', '$window',
     }
 ]);
 
+app.filter('filter',function(){
+    return function(tracks, genreFilter){
+        if (!genreFilter || genreFilter=="All"){
+            return tracks;
+        }
+        else{
+            var newTracks = [];
+            var genreFilter = genreFilter.toLowerCase();
+            console.log("GenreFilter: ", genreFilter);
+            for (var i of tracks){
+                if(checkGenre(i.genre, genreFilter)){
+                    newTracks.push(i);
+                }
+            }
+            // loop through genres checking if 'genreFilter' exists
+            function checkGenre(genre, genreFilter) {
+              for (var g of genre) {
+                if (g.toLowerCase().indexOf(genreFilter) > -1) {
+                  return true;
+                }
+              }
+              return false;
+            }
+            return newTracks;
 
-  app.filter('search', function() {
+        }
+    }
+});
+
+app.filter('search', function() {
     return function(tracks, keyword) {
       // if no keyword is entered, just display all the tracks
       if (!keyword) { 
@@ -81,18 +109,9 @@ app.controller('homeCtrl', ['$scope', '$resource', '$location', '$window',
         for (var i of tracks) {
           if (i.title.toLowerCase().indexOf(keyword) > -1 || 
               i.album.toLowerCase().indexOf(keyword) > -1 || 
-              checkGenre(i.genre, keyword)|| 
               checkArtist(i.artist, keyword)) { newTracks.push(i); }
         }
-        // loop through genres checking if 'keyword' exists
-        function checkGenre(genre, keyword) {
-          for (var g of genre) {
-            if (g.toLowerCase().indexOf(keyword) > -1) {
-              return true;
-            }
-          }
-          return false;
-        }
+
         // loop through artist checking if 'keyword' exists
         function checkArtist(artist, keyword) {
           for (var a of artist) {

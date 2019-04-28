@@ -1,13 +1,26 @@
 <div ng-include="'partials/navbar.html'"></div>
 <div class="container" ng-controller="homeCtrl" id="app">
-    <p><input type="text" ng-model="keyword" placeholder="search for..."></p>
+    <p><input type="text" ng-model="keyword" placeholder="search for...">
+    	<select  ng-model="genreFilter">
+			<option value="All">All</option>
+			<option value="Rock">Rock</option>
+			<option value="Pop">Pop</option>
+			<option value="Jazz">Jazz</option>
+			<option value="Blues">Blues</option>
+			<option value="Country">Country</option>
+			<option value="Classical">Classical</option>
+			<option value="Heavy Metal">Heavy metal</option>
+			<option value="Rapping">Rapping</option>
+			<option value="Folk">Folk</option>
+		</select>
+    </p>
 
 	<h1>Music Store</h1>
 	<p>
 		<a href="/#/add-track">Add Track</a>
 	</p>
 	<ul>
-		<li ng-repeat ="track in tracks|search:keyword" style="float:left; padding: 16px">
+		<li ng-repeat ="track in tracks|search:keyword|filter: genreFilter" style="float:left; padding: 16px">
 	        <a href="/#/track/editTrack/{{track._id}}">
 	           <!-- <img ng-src="/images/{{video._id}}.jpg" alt="could not be loaded" style="height:200px;width:170px;"/> <br> -->
 	            {{track.title}}

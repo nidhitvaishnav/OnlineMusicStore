@@ -18,11 +18,22 @@
 		</div>
 		<div class="form-group">
 			<label>Genre</label>
-			<textarea class="form-control" ng-model="track.genre"></textarea>
+			<label>{{track.genre}}</label>
+			<select class="form-control" ng-model="track.genre">
+				<option value="Rock">Rock</option>
+				<option value="Pop">Pop</option>
+				<option value="Jazz">Jazz</option>
+				<option value="Blues">Blues</option>
+				<option value="Country">Country</option>
+				<option value="Classical">Classical</option>
+				<option value="Heavy Metal">Heavy metal</option>
+				<option value="Rapping">Rapping</option>
+				<option value="Folk">Folk</option>
+			</select>
 		</div>
 		<div class="form-group">
 			<label>Track Length</label>
-			<textarea class="form-control" ng-model="track.trackLength"></textarea>
+			<input class="form-control" ng-model="track.trackLength"></textarea>
 		</div>
 		<input type="button" class="btn btn-primary" value="Save" ng-click="save()"></input>
 	</form>

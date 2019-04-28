@@ -215,7 +215,7 @@ app.controller('AddTrackCtrl', ['$scope', '$resource', '$location', '$window',
             $scope.save = function() {
                 var Tracks = $resource('/api/music');
                 Tracks.save($scope.track, function() {
-                    $location.path('/');
+                    $location.path('/home');
                 });
             };
         } else {

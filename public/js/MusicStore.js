@@ -59,6 +59,7 @@ app.controller('homeCtrl', ['$scope', '$resource', '$location', '$window',
             $scope.userToken = $window.localStorage.getItem('userToken');
             $scope.isAdmin = $window.localStorage.getItem('is_admin');
 
+            //paging
             $scope.currentPage = 0;
             $scope.pageSize = 4;
             $scope.tracks = [];
@@ -302,6 +303,7 @@ app.controller('displayCtrl', ['$scope', '$resource', '$location', '$routeParams
                 // Tracks.update($scope.track, function() {
                 //     $location.path('/home');
                 // });
+                // var fileId = req.query.id; 
                 Tracks.delete({
                     id: $routeParams.id
                 }, function(track) {

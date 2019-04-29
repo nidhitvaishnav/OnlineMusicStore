@@ -34,9 +34,9 @@
 		<a href="/#/add-track">Add Track</a>
 	</p>
  -->
- 	<div class= wrapper">
+ 	<div class="row-fluid">
  	<ul>
- 		<div>
+ 		<div class="col-sm">
 		<li ng-repeat ="track in tracks|search:keyword|filter: genreFilter | startFrom: currentPage * pageSize | limitTo: pageSize" style="float:left; padding: 16px">
 <!-- 	        <a href="/#/track/editTrack/{{track._id}}">
  -->	    	       
@@ -48,6 +48,7 @@
 	        </a>
 	        <form>
 				<i class="fab fa-gratipay" ng-click="like(track._id)"></i>
+				<label>Hits: {{track.downloadCount}}</label>
 			</form>
 	        <br>
 	        <div ng-if="isAdmin === 'true'">
@@ -63,14 +64,17 @@
 	</ul>
 </div>
 	<div class="footer navbar-dark bg-dark">
-   
+	<br> 
+	<button ng-disabled="currentPage == 0" ng-click="currentPage=0">
+        Home
+    </button>  
     <button ng-disabled="currentPage == 0" ng-click="currentPage=currentPage-1">
         Previous
     </button>
     {{currentPage+1}}/{{numberOfPages()}}
     <button ng-disabled="currentPage >= tracks.length/pageSize - 1" ng-click="currentPage=currentPage+1">
         Next
-    </button>
+    </button><br><br>
 </div>
 </div>
 </div>

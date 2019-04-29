@@ -6,6 +6,7 @@
         Are you sure you want to delete this track?
     </p>
     <ul>
+        <img ng-src="/images/{{track._id}}.jpg" alt="could not be loaded"  style="height:200px;width:170px;"/> <br>
         <li>Title: {{track.title}}</li>
         <li>Album: {{track.album}}</li>
         <li>Genre: {{track.genre}}</li>
@@ -13,7 +14,7 @@
         <li>TrackLength: {{track.trackLength}}</li>
         <li>Hits: {{track.downloadCount}}</li>
     </ul>
-     <input type="button" value="Play" class="btn btn-danger" ng-click="play()" />
+     <input type="button" value="Play" class="btn btn-success" ng-click="play()" />
 
     <a class="btn btn-default" href="/#/">Go Back</a>
 </div>

@@ -99,17 +99,28 @@ router.delete('/:id', function(req, res) {
     });
 });
 
-// backup code
-// router.delete('/:id', function(req, res) {
-//     var collection = db.get('tracks');
-//     collection.remove({
-//         _id: req.params.id
-//     }, function(err, track) {
-//         if (err) throw err;
+router.get('/hits/:id', function(req, res) {
+    var collection = db.get('tracks');
+    collection.findOne({
+        _id: req.params.id
+    }, function(err, track) {
+        if (err) throw err;
+        res.json(track);
+    });
+});
 
-//         res.json(track);
-//     });
-// });
+router.delete('/hits/:id', function(req, res) {
+    var collection = db.get('tracks');
+    collection.update({
+        _id: req.params.id
+    }, {
+        $inc: {downloadCount : 1 }
+    }, function(err, track) {
+        if (err) throw err;
+        res.json(track);
+    });
+});
+
 
 router.post('/like', function(req, res) {
     var fav = req.body.trackID;

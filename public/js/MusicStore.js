@@ -292,21 +292,24 @@ app.controller('displayCtrl', ['$scope', '$resource', '$location', '$routeParams
             $scope.isAdmin = $window.localStorage.getItem('is_admin');
             $scope.userEmail = $window.localStorage.getItem('userEmail');
             $scope.userToken = $window.localStorage.getItem('userToken');
-            var Tracks = $resource('/api/music/:id');
-
-            Tracks.get({
+            var Tracks = $resource('/api/music/hits/:id');            Tracks.get({
                 id: $routeParams.id
             }, function(track) {
                 $scope.track = track;
             })
 
-            // $scope.delete = function() {
-            //     Tracks.delete({
-            //         id: $routeParams.id
-            //     }, function(track) {
-            //         $location.path('/home');
-            //     });
-            // }
+            $scope.play = function() {
+                // Tracks.update($scope.track, function() {
+                //     $location.path('/home');
+                // });
+                Tracks.delete({
+                    id: $routeParams.id
+                }, function(track) {
+                    $location.path('/home');
+                });
+
+            }
+
         } else {
             $location.path('/home');
         }

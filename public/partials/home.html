@@ -40,9 +40,10 @@
 		<li ng-repeat ="track in tracks|search:keyword|filter: genreFilter | startFrom: currentPage * pageSize | limitTo: pageSize" style="float:left; padding: 16px">
 <!-- 	        <a href="/#/track/editTrack/{{track._id}}">
  -->	    	       
-
+<!-- 			<input type="button" class="btn btn-primary" value="Title" ng-click="increseHits()"></input>
+ -->
  			 <a href="/#/track/{{track._id}}">
- 			<img ng-src="/images/{{track._id}}.jpg" alt="could not be loaded" style="height:200px;width:170px;"/> <br>
+ 			<img ng-src="/images/{{track._id}}.jpg" alt="could not be loaded"  style="height:200px;width:170px;"/> <br>
 	            {{track.title}}
 	        </a>
 	        <form>

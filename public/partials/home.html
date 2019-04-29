@@ -1,36 +1,59 @@
 <div ng-include="'partials/navbar.html'"></div>
 <div class="container" ng-controller="homeCtrl" id="app">
-    <p><input type="text" ng-model="keyword" placeholder="search for...">
-    	<select  ng-model="genreFilter">
-			<option value="All">All</option>
-			<option value="Rock">Rock</option>
-			<option value="Pop">Pop</option>
-			<option value="Jazz">Jazz</option>
-			<option value="Blues">Blues</option>
-			<option value="Country">Country</option>
-			<option value="Classical">Classical</option>
-			<option value="Heavy Metal">Heavy metal</option>
-			<option value="Rapping">Rapping</option>
-			<option value="Folk">Folk</option>
-		</select>
-    </p>
+<!--  <h1>Music Store</h1>
+ -->   
+ 	<div class="form-group navbar navbar">
+		<div class="">
+  			<div class="form-inline">
+    			<div class="form-group col-xs-6" >
+			    	<select class="form-control" ng-model="genreFilter" }>
+			    		<optgroup label="Genre">
+						<option value="All">All</option>
+						<option value="Rock">Rock</option>
+						<option value="Pop">Pop</option>
+						<option value="Jazz">Jazz</option>
+						<option value="Blues">Blues</option>
+						<option value="Country">Country</option>
+						<option value="Classical">Classical</option>
+						<option value="Heavy Metal">Heavy metal</option>
+						<option value="Rapping">Rapping</option>
+						<option value="Folk">Folk</option>
+					</optgroup>
+					</select>
+				</div>
+    			<div class="form-group col-xs-6">
+				 	<input type="text" class="form-control" ng-model="keyword" placeholder="search for song/album/artist..." style="width: 500px;padding: 16px">
+				</div>
+			</div>
+		</div>
+	</div>
+  
 
-	<h1>Music Store</h1>
-	<p>
+	
+<!-- 	<p>
 		<a href="/#/add-track">Add Track</a>
 	</p>
-	<ul>
+ -->
+ 	<div class= wrapper">
+ 	<ul>
+ 		<div>
 		<li ng-repeat ="track in tracks|search:keyword|filter: genreFilter | startFrom: currentPage * pageSize | limitTo: pageSize" style="float:left; padding: 16px">
 	        <a href="/#/track/editTrack/{{track._id}}">
-	           <!-- <img ng-src="/images/{{video._id}}.jpg" alt="could not be loaded" style="height:200px;width:170px;"/> <br> -->
+	           <img ng-src="/images/{{track._id}}.jpg" alt="could not be loaded" style="height:200px;width:170px;"/> <br>
 	            {{track.title}}
 	        </a>
+	        <br>
+			<a href="/#/track/editTrack/{{track._id}}" class="btn btn-info btn-lg">
+          		<span class="glyphicon glyphicon-pencil"></span> Edit {{track.title}}
+      		</a>
 			<a href="/#/track/deleteTrack/{{track._id}}" class="btn btn-info btn-danger">
 	            <i class="glyphicon glyphicon-remove"></i>Delete
 	        </a>
 		</li>
-
+		<div>
 	</ul>
+</div>
+	<div class="footer navbar-dark bg-dark">
    
     <button ng-disabled="currentPage == 0" ng-click="currentPage=currentPage-1">
         Previous
@@ -39,4 +62,6 @@
     <button ng-disabled="currentPage >= tracks.length/pageSize - 1" ng-click="currentPage=currentPage+1">
         Next
     </button>
+</div>
+</div>
 </div>

@@ -27,7 +27,7 @@ const Users = mongoose.model('users');
 
 router.get('/', function(req, res) {
     var collection = db.get('tracks');
-    collection.find({}, function(err, tracks) {
+    collection.find({'is_deleted':false}, function(err, tracks) {
         if (err) throw err;
         res.json(tracks);
     });
@@ -46,7 +46,8 @@ router.post('/', function(req, res) {
         genre: genre,
         artist: artist,
         trackLength: req.body.trackLength,
-        downloadCount: 0
+        downloadCount: 0,
+        is_deleted : false
     }, function(err, track) {
         if (err) throw err;
         res.json(track);
@@ -73,11 +74,13 @@ router.put('/:id', function(req, res) {
     collection.update({
         _id: req.params.id
     }, {
+        $set: { 
         title: req.body.title,
         album: req.body.album,
         genre: genre,
         artist: artist,
-        trackLength: req.body.trackLength
+        trackLength: req.body.trackLength,
+    }
     }, function(err, track) {
         if (err) throw err;
         res.json(track);
@@ -86,14 +89,27 @@ router.put('/:id', function(req, res) {
 
 router.delete('/:id', function(req, res) {
     var collection = db.get('tracks');
-    collection.remove({
+    collection.update({
         _id: req.params.id
+    }, {
+        $set: {is_deleted: true}
     }, function(err, track) {
         if (err) throw err;
-
         res.json(track);
     });
 });
+
+// backup code
+// router.delete('/:id', function(req, res) {
+//     var collection = db.get('tracks');
+//     collection.remove({
+//         _id: req.params.id
+//     }, function(err, track) {
+//         if (err) throw err;
+
+//         res.json(track);
+//     });
+// });
 
 router.post('/like', function(req, res) {
     var fav = req.body.trackID;

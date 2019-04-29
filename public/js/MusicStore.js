@@ -31,6 +31,11 @@ app.config(['$routeProvider', function($routeProvider, $locationProvider) {
             templateUrl: 'partials/track-form.html',
             controller: 'AddTrackCtrl'
         })
+        .when('/track/:id', {
+            templateUrl: 'partials/track-display.html',
+            controller: 'displayCtrl'
+        })
+
         .when('/track/editTrack/:id', {
             templateUrl: 'partials/track-form.html',
             controller: 'EditTrackCtrl'
@@ -277,8 +282,8 @@ app.controller('AddTrackCtrl', ['$scope', '$resource', '$location', '$window',
     }
 ]);
 
-// Delete Track Page
-app.controller('DeleteTrackCtrl', ['$scope', '$resource', '$location', '$routeParams', '$window',
+
+app.controller('displayCtrl', ['$scope', '$resource', '$location', '$routeParams', '$window',
     function($scope, $resource, $location, $routeParams, $window) {
 
         if ($window.localStorage.getItem('loggedIn') == 'yes') {
@@ -295,13 +300,13 @@ app.controller('DeleteTrackCtrl', ['$scope', '$resource', '$location', '$routePa
                 $scope.track = track;
             })
 
-            $scope.delete = function() {
-                Tracks.delete({
-                    id: $routeParams.id
-                }, function(track) {
-                    $location.path('/home');
-                });
-            }
+            // $scope.delete = function() {
+            //     Tracks.delete({
+            //         id: $routeParams.id
+            //     }, function(track) {
+            //         $location.path('/home');
+            //     });
+            // }
         } else {
             $location.path('/home');
         }
@@ -343,6 +348,42 @@ app.controller('EditTrackCtrl', ['$scope', '$resource', '$location', '$routePara
         }
     }
 ]);
+
+// Delete Track Page
+app.controller('DeleteTrackCtrl', ['$scope', '$resource', '$location', '$routeParams', '$window',
+    function($scope, $resource, $location, $routeParams, $window) {
+
+        if ($window.localStorage.getItem('loggedIn') == 'yes') {
+            $scope.loggedIn = 'yes';
+            $scope.userID = $window.localStorage.getItem('userID');
+            $scope.isAdmin = $window.localStorage.getItem('is_admin');
+            $scope.userEmail = $window.localStorage.getItem('userEmail');
+            $scope.userToken = $window.localStorage.getItem('userToken');
+            var Tracks = $resource('/api/music/:id');
+
+            Tracks.get({
+                id: $routeParams.id
+            }, function(track) {
+                $scope.track = track;
+            })
+
+            $scope.delete = function() {
+                // Tracks.update($scope.track, function() {
+                //     $location.path('/home');
+                // });
+                Tracks.delete({
+                    id: $routeParams.id
+                }, function(track) {
+                    $location.path('/home');
+                });
+            }
+        } else {
+            $location.path('/home');
+        }
+    }
+]);
+
+
 
 // Favorites Page
 app.controller('favoritesCtrl', ['$scope', '$resource', '$location', '$window', '$http',

@@ -38,21 +38,25 @@
  	<ul>
  		<div>
 		<li ng-repeat ="track in tracks|search:keyword|filter: genreFilter | startFrom: currentPage * pageSize | limitTo: pageSize" style="float:left; padding: 16px">
-	        <a href="/#/track/editTrack/{{track._id}}">
-	           <img ng-src="/images/{{track._id}}.jpg" alt="could not be loaded" style="height:200px;width:170px;"/> <br>
+<!-- 	        <a href="/#/track/editTrack/{{track._id}}">
+ -->	    	       
+
+ 			 <a href="/#/track/{{track._id}}">
+ 			<img ng-src="/images/{{track._id}}.jpg" alt="could not be loaded" style="height:200px;width:170px;"/> <br>
 	            {{track.title}}
 	        </a>
 	        <form>
 				<i class="fab fa-gratipay" ng-click="like(track._id)"></i>
 			</form>
 	        <br>
+	        <div ng-if="isAdmin === 'true'">
 			<a href="/#/track/editTrack/{{track._id}}" class="btn btn-info btn-lg">
-          		<span class="glyphicon glyphicon-pencil"></span> Edit {{track.title}}
+          		<span class="glyphicon glyphicon-pencil"></span> Edit
       		</a>
 			<a href="/#/track/deleteTrack/{{track._id}}" class="btn btn-info btn-danger">
 	            <i class="glyphicon glyphicon-remove"></i>Delete
 	        </a>
-
+	    </div>
 		</li>
 		<div>
 	</ul>

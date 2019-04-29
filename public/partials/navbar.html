@@ -12,6 +12,10 @@
             <li class="nav-item">
                 <a class="nav-link" href="#/test">Test</a>
             </li>
+            <li class="nav-item" ng-if="loggedIn === 'yes'">
+                <a class="nav-link" href="#/favorites">Favorites</a>
+            </li>
+
             <li class="nav-item dropdown" ng-if="isAdmin === 'true'">
                 <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     Admin Operations
@@ -29,6 +33,7 @@
             <li class="nav-item" ng-if="loggedIn === 'no'">
                 <a class="nav-link" href="#/register">Register</a>
             </li>
+
             <li class="nav-item" ng-if="loggedIn === 'yes'">
                 <a class="nav-link" href="#/logout">Logout</a>
             </li>

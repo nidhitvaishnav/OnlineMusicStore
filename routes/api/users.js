@@ -3,6 +3,8 @@ const passport = require('passport');
 const router = require('express').Router();
 const auth = require('../auth');
 const Users = mongoose.model('users');
+var monk = require('monk');
+var db = monk('localhost:27017/MusicApp');
 
 //POST new user route (optional, everyone has access)
 router.post('/', auth.optional, function(req, res, next) {
@@ -124,6 +126,7 @@ router.get('/current', auth.required, function(req, res, next) {
         });
 });
 
+// GET Admin status of the user
 router.get('/is_admin', auth.required, function(req, res, next) {
     const {
         payload: {
@@ -147,6 +150,28 @@ router.get('/is_admin', auth.required, function(req, res, next) {
                 });
             }
 
+        }
+    );
+});
+
+
+// GET favorite tracks of the user
+router.get('/favorites', auth.required, function(req, res, next) {
+    const {
+        payload: {
+            id
+        }
+    } = req;
+
+    Users.findOne({
+            '_id': id
+        },
+        function(err, data) {
+            if (err) throw err;
+            var collection = db.get('tracks');
+            var favorites = data['favorites'];
+            var trackData = [];
+            res.json(data['favorites']);
         }
     );
 });

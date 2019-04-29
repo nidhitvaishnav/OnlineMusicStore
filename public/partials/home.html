@@ -42,6 +42,9 @@
 	           <img ng-src="/images/{{track._id}}.jpg" alt="could not be loaded" style="height:200px;width:170px;"/> <br>
 	            {{track.title}}
 	        </a>
+	        <form>
+				<i class="fab fa-gratipay" ng-click="like(track._id)"></i>
+			</form>
 	        <br>
 			<a href="/#/track/editTrack/{{track._id}}" class="btn btn-info btn-lg">
           		<span class="glyphicon glyphicon-pencil"></span> Edit {{track.title}}
@@ -49,6 +52,7 @@
 			<a href="/#/track/deleteTrack/{{track._id}}" class="btn btn-info btn-danger">
 	            <i class="glyphicon glyphicon-remove"></i>Delete
 	        </a>
+
 		</li>
 		<div>
 	</ul>

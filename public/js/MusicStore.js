@@ -23,6 +23,10 @@ app.config(['$routeProvider', function($routeProvider, $locationProvider) {
             templateUrl: 'partials/home.html',
             controller: 'logoutCtrl'
         })
+        .when('/favorites', {
+            templateUrl: 'partials/favorites.html',
+            controller: 'favoritesCtrl'
+        })
         .when('/add-track', {
             templateUrl: 'partials/track-form.html',
             controller: 'AddTrackCtrl'
@@ -36,7 +40,7 @@ app.config(['$routeProvider', function($routeProvider, $locationProvider) {
             controller: 'DeleteTrackCtrl'
         })
         .otherwise({
-            redirectTo: '/'
+            redirectTo: '/home'
         });
 }]);
 
@@ -62,21 +66,31 @@ app.controller('homeCtrl', ['$scope', '$resource', '$location', '$window',
                 for (var i of tracks) {
                     $scope.tracks.push(i);
                 }
-
-                // $scope.tracks = tracks;
-                // console.log(tracks);
             });
         } else {
             $location.path('/login');
+        }
+        $scope.like = function(id) {
+            var Like = $resource('/api/music/like');
+            var data = {
+                'userID': $window.localStorage.getItem('userID'),
+                'trackID': id
+            };
+            // console.log("data: ", data);
+            Like.save(data, function(res) {
+                // console.log("inside Like.save()");
+                console.log(res);
+                $location.path('/home');
+            });
         }
     }
 ]);
 
     app.filter('startFrom', function() {
         return function(tracks, start) {
-            for (var i of tracks){
-                console.log("printing tracks:", i);
-            }
+            // for (var i of tracks){
+            //     console.log("printing tracks:", i);
+            // }
             start = +start; //parse to int
             return tracks.slice(start);
         }
@@ -326,6 +340,72 @@ app.controller('EditTrackCtrl', ['$scope', '$resource', '$location', '$routePara
             }
         } else {
             $location.path('/home');
+        }
+    }
+]);
+
+// Favorites Page
+app.controller('favoritesCtrl', ['$scope', '$resource', '$location', '$window', '$http',
+    function($scope, $resource, $location, $window, $http) {
+        if ($window.localStorage.getItem('loggedIn') == 'yes') {
+
+            $scope.loggedIn = 'yes';
+            $scope.userID = $window.localStorage.getItem('userID');
+            $scope.userEmail = $window.localStorage.getItem('userEmail');
+            $scope.userToken = $window.localStorage.getItem('userToken');
+            $scope.isAdmin = $window.localStorage.getItem('is_admin');
+
+            $scope.trackList = [];
+            $scope.t = 'asd';
+            var tracks = getNames();
+
+            function getNames() {
+                var userFav = {
+                    url: '/api/users/favorites',
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Token ' + $window.localStorage.getItem('userToken')
+                    }
+                };
+
+                $http(userFav).then(function(response) {
+                    var favArray = response['data'];
+                    for (var i in favArray) {
+                        var Tracks = $resource('/api/music/:id', {
+                            id: '@_id'
+                        }, {
+                            update: {
+                                method: 'GET'
+                            }
+                        });
+
+                        Tracks.get({
+                            id: favArray[i]
+                        }, function(track) {
+                            $scope.trackList.push(track);
+                            console.log($scope.trackList);
+                        });
+                    }
+                });
+            }
+
+        } else {
+            $location.path('/login');
+        }
+
+        $scope.unlike = function(id) {
+
+            var Like = $resource('/api/music/unlike');
+            var data = {
+                'userID': $window.localStorage.getItem('userID'),
+                'trackID': id
+            };
+            Like.save(data, function(res) {
+                console.log(res);
+                $location.path('/favorites');
+            });
+
         }
     }
 ]);

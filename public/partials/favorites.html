@@ -1,0 +1,17 @@
+<div ng-include="'partials/navbar.html'"></div>
+
+<div class="container">
+	<h1>Music Store</h1>
+	<ul>
+		<li ng-repeat ="track in trackList" style="float:left; padding: 16px">
+	        <a href="/#/track/editTrack/{{track._id}}">
+	           <!-- <img ng-src="/images/{{video._id}}.jpg" alt="could not be loaded" style="height:200px;width:170px;"/> <br> -->
+	            {{ track.title }}
+	        </a>
+			<form>
+				<i class="fas fa-thumbs-down" ng-click="unlike(track._id)"></i> 
+			</form>
+		</li>
+	</ul>
+
+</div>
